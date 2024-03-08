@@ -22,15 +22,24 @@ namespace HoaDon_API.Controllers
         public ActionResult<List<Hanghoa>> GetAll()
         {
             var hanghoa = _context.Hanghoas.ToList();
-            return hanghoa;
+            if (!hanghoa.Any())
+            {
+                return BadRequest("Fail");
+            }
+            else
+            {
+                return Ok(hanghoa);
+
+            }
         }
+
         [HttpGet]
         public ActionResult<Hanghoa> GetById(string mahang)
         {
             var hanghoa = _context.Hanghoas.FirstOrDefault(x => x.Mahang == mahang);
             if (hanghoa == null)
             {
-                return NotFound($"Not Found Ma hang {mahang}");
+                return NotFound($"Not Found Ma hang '{mahang}'");
             }
             return hanghoa;
         }
@@ -38,16 +47,23 @@ namespace HoaDon_API.Controllers
         [HttpPost]
         public ActionResult Create(HangHoaDto dto)
         {
-            Hanghoa hanghoa = new Hanghoa
+            if (dto == null)
             {
-                Mahang = dto.Mahang,
-                Tenhang = dto.Tenhang,
-                Dvt = dto.Dvt,
-                Dongia = dto.Dongia,
-            };
-            _context.Hanghoas.Add(hanghoa);
-            _context.SaveChanges();
-            return Ok("Create success");
+                return BadRequest("Invalid");
+            }
+            else
+            {
+                Hanghoa hanghoa = new Hanghoa
+                {
+                    Mahang = dto.Mahang,
+                    Tenhang = dto.Tenhang,
+                    Dvt = dto.Dvt,
+                    Dongia = dto.Dongia,
+                };
+                _context.Hanghoas.Add(hanghoa);
+                _context.SaveChanges();
+                return Ok("Create success");
+            }
         }
 
         [HttpDelete]
@@ -56,7 +72,7 @@ namespace HoaDon_API.Controllers
             var hanghoaFind = _context.Hanghoas.FirstOrDefault(x => x.Mahang == id);
             if (hanghoaFind == null)
             {
-                return NotFound($"Not found hang hoa {id}");
+                return NotFound($"Not found hang hoa '{id}'");
             }
             else
             {
@@ -73,7 +89,7 @@ namespace HoaDon_API.Controllers
             var hanghoaFind = _context.Hanghoas.FirstOrDefault(x => x.Mahang == mahang);
             if (hanghoaFind == null)
             {
-                return NotFound($"Not found ma hang {mahang}");
+                return NotFound($"Not found ma hang '{mahang}'");
             }
             else
             {
